@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors')
+const bodyParser = require('body-parser')
 const randomString = require('randomstring')
 const sendMail = require('./helpers/sendMail')
 const port = process.env.PORT || 8000;
@@ -10,6 +11,11 @@ const webRouter = require('./routes/webRoute')
 const app = express();
 app.use(express.json())
 
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+
 app.use(cors())
 
 
@@ -18,9 +24,9 @@ app.use('/', webRouter)
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-    res.send('Welcome to Shurq')
-})
+// app.get('/', (req, res) => {
+//     res.send('Hello World!')
+// })
 
 app.get('/', (req, res) => {
     res.render('index', req.query);
@@ -46,7 +52,7 @@ app.post('/signup', (req, res) => {
         }
 
         const mailSubject = 'Mail Verification';
-        const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
+        const content = `<p>Hi ${req.body.firstName}, please <a href="http://localhost:8000/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
         sendMail(req.body.email, mailSubject, content)
 
         return res.json(data)
