@@ -10,30 +10,8 @@ const webRouter = require('./routes/webRoute')
 const app = express();
 app.use(express.json())
 
+app.use(cors())
 
-
-// const corsOptions = {
-//     origin: [
-//       'http://localhost:3000',
-//       'https://api.resend.com',
-//       'https://api.resend.com/emails'
-//     ],
-//     credentials: true,
-//     optionSuccessStatus: 200,
-//   }
-  app.use(cors())
-
-
-
-// const db = mysql.createPool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_DBNAME,
-//     waitForConnection: true,
-//     connectionLimit: 10,
-//     queueLimit: 0
-// })
 
 // middleware
 app.use('/', webRouter)
@@ -41,12 +19,16 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
+    res.send('Welcome to Shurq')
+})
+
+app.get('/', (req, res) => {
     res.render('index', req.query);
 });
 
 // signup for creating account
 app.post('/signup', (req, res) => {
-    
+
     const token = randomString.generate();
     const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token` ) VALUES (?)";
     const values = [
@@ -59,7 +41,7 @@ app.post('/signup', (req, res) => {
         token,
     ]
     db.query(sql, [values], (err, data) => {
-        if(err) {
+        if (err) {
             return res.json("Error");
         }
 
@@ -73,14 +55,14 @@ app.post('/signup', (req, res) => {
 
 // login
 app.post('/sigin', (req, res) => {
-    
+
     const token = randomString.generate();
     const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = 1";
     db.query(sql, [req.body.email, req.body.password], (err, data) => {
-        if(err) {
+        if (err) {
             return res.json("Error");
         }
-        if(data.length > 0) {
+        if (data.length > 0) {
             return res.json('Success')
         }
         else {
