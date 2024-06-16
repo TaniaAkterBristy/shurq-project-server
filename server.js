@@ -63,7 +63,7 @@ app.post('/signup', (req, res) => {
     db.query(sql, [values], (err, data) => {
         if (err) {
             // console.log('err s', err);
-            return res.json("Error");
+            return res.json(err);
         }
 
         const mailSubject = 'Mail Verification';
