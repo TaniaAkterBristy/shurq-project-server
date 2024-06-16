@@ -29,6 +29,7 @@ app.set('view engine', 'ejs');
 // })
 
 app.get('/', (req, res) => {
+    console.log('req qurery', req.query);
     res.render('index', req.query);
 });
 
