@@ -80,8 +80,9 @@ app.post('/signup', (req, res) => {
 app.post('/sigin', (req, res) => {
 
     const token = randomString.generate();
-    const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = 1";
-    db.query(sql, [req.body.email, req.body.password], (err, data) => {
+    const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = ?";
+    const is_verified = 1;
+    db.query(sql, [req.body.email, req.body.password, is_verified], (err, data) => {
         if (err) {
             return res.json("Error");
         }
