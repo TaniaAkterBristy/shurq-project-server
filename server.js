@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 
 // signup for creating account
 app.post('/signup', (req, res) => {
+    console.log('hit signup', req.body);
 
     const token = randomString.generate();
     const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token` ) VALUES (?)";
@@ -47,15 +48,17 @@ app.post('/signup', (req, res) => {
         req.body.confirmPassword,
         token,
     ]
+    console.log('sign values', values);
     db.query(sql, [values], (err, data) => {
         if (err) {
+            console.log('err s', err);
             return res.json("Error");
         }
 
         const mailSubject = 'Mail Verification';
         const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
         sendMail(req.body.email, mailSubject, content)
-
+        console.log('data sign', data);
         return res.json(data)
     })
 })
