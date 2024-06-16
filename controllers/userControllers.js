@@ -8,6 +8,7 @@ const verifyMail = (req, res) => {
             console.log(error.message);
         }
         if(result.length > 0) {
+            console.log('verify result', result);
             db.query(`UPDATE shurq_log SET token = null, is_verified = 1 WHERE id='${result[0].id}'`)
 
             return res.render('mail-verification', {message: 'Email Verified Successfully!!'})
