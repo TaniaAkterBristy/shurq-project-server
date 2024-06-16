@@ -49,7 +49,8 @@ app.post('/signup', (req, res) => {
     console.log('hit signup', req.body);
 
     const token = randomString.generate();
-    const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token` ) VALUES (?)";
+    const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token`, is_verified ) VALUES (?)";
+    const is_verified = 0;
     const values = [
         req.body.firstName,
         req.body.lastName,
@@ -58,6 +59,7 @@ app.post('/signup', (req, res) => {
         req.body.password,
         req.body.confirmPassword,
         token,
+        is_verified
     ]
     // console.log('sign values', values);
     db.query(sql, [values], (err, data) => {
