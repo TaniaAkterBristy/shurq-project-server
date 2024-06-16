@@ -1,9 +1,9 @@
-<% 
-  if(message) {
-    %>
-    <h1><%= message %></h1>
-    <%
-  }
-%>
-
-
+<% if(message) { %>
+  <h1>
+    <%= message %>
+  </h1>
+  <% } else { %>
+    <h3 class="fadeIn">PAGE NOT FOUND</h3>
+    <button type="button" name="button"><a style="text-decoration: none;" href="https://shurq-project-client.vercel.app/">Create
+        Account</a></button>
+    <% } %>

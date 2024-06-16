@@ -21,17 +21,17 @@ app.use(cors())
 
 // middleware
 app.use('/', webRouter)
-app.set('views', './views');
-app.set('view engine', 'ejs');
 
-// app.get('/', (req, res) => {
-//     res.send('Hello World!')
-// })
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 app.get('/', (req, res) => {
-    console.log('req qurery', req.query);
-    res.render('index', req.query);
-});
+    res.send('Welcome to Shurq!')
+})
+
+// app.get('/', (req, res) => {
+//     res.render('index', req.query);
+// });
 
 // signup for creating account
 app.post('/signup', (req, res) => {
