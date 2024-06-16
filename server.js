@@ -52,7 +52,7 @@ app.post('/signup', (req, res) => {
         }
 
         const mailSubject = 'Mail Verification';
-        const content = `<p>Hi ${req.body.firstName}, please <a href="http://localhost:8000/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
+        const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
         sendMail(req.body.email, mailSubject, content)
 
         return res.json(data)
