@@ -65,9 +65,9 @@ app.post('/signup', (req, res) => {
             return res.json("Error");
         }
 
-        // const mailSubject = 'Mail Verification';
-        // const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
-        // sendMail(req.body.email, mailSubject, content)
+        const mailSubject = 'Mail Verification';
+        const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
+        sendMail(req.body.email, mailSubject, content)
         console.log('data sign', data);
         return res.json('backend sighnup data', data)
     })
