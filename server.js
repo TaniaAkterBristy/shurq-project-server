@@ -84,7 +84,7 @@ app.post('/sigin', (req, res) => {
     const is_verified = 1;
     db.query(sql, [req.body.email, req.body.password, is_verified], (err, data) => {
         if (err) {
-            return res.json("Error");
+            return res.json(err);
         }
         if (data.length > 0) {
             return res.json('Success')
