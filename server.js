@@ -26,6 +26,7 @@ const corsOptions = {
     optionSuccessStatus: 200,
 }
 app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
 
 
@@ -58,18 +59,18 @@ app.post('/signup', (req, res) => {
         req.body.confirmPassword,
         token,
     ]
-    console.log('sign values', values);
+    // console.log('sign values', values);
     db.query(sql, [values], (err, data) => {
         if (err) {
-            console.log('err s', err);
+            // console.log('err s', err);
             return res.json("Error");
         }
 
         const mailSubject = 'Mail Verification';
         const content = `<p>Hi ${req.body.firstName}, please <a href="https://shurq-project-server.onrender.com/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
         sendMail(req.body.email, mailSubject, content)
-        console.log('data sign', data);
-        return res.json('backend sighnup data', data)
+        // console.log('data sign', data);
+        return res.json(data)
     })
 })
 
