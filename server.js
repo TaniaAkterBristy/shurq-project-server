@@ -26,7 +26,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.get('/', (req, res) => {
-    res.send('Welcome to Shurq!')
+    res.send('Welcome to Shurq!!')
 })
 
 // app.get('/', (req, res) => {
