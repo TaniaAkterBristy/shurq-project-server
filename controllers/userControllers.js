@@ -1,4 +1,4 @@
-const db = require('../routes/userRoute')
+const {db} = require('../routes/userRoute')
 
 const verifyMail = (req, res) => {
     const token = req.query.token;
@@ -8,7 +8,6 @@ const verifyMail = (req, res) => {
             console.log(error.message);
         }
         if(result.length > 0) {
-            console.log('verify result', result);
             db.query(`UPDATE shurq_log SET token = '', is_verified = 1 WHERE id='${result[0].id}'`)
 
             return res.render('mail-verification', {message: 'Email Verified Successfully!!'})
