@@ -5,7 +5,6 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const port = 8000 || process.env.PORT2;
 const { pool } = require('./routes/userRoute')
-const webRouter = require('./routes/webRoute')
 const redis = require('redis');
 const REDIS_PORT = 6379;
 
@@ -30,12 +29,6 @@ app.use(cors(corsOptions))
 app.use(cors())
 app.use(express.json())
 
-
-// middleware
-app.use('/', webRouter)
-
-app.set('view engine', 'ejs');
-app.set('views', './views');
 
 // redis code start
 
