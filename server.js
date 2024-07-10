@@ -5,8 +5,8 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const randomString = require('randomstring')
 const sendMail = require('./helpers/sendMail')
-const port = process.env.PORT || process.env.PORT2 || 8000;
-const { db, pool } = require('./routes/userRoute')
+const port = 8000 || process.env.PORT2;
+const { pool } = require('./routes/userRoute')
 const webRouter = require('./routes/webRoute')
 const redis = require('redis');
 const REDIS_PORT = 6379;
@@ -268,118 +268,144 @@ app.get('/product-data', cache, getRepos);
 
 // signup for creating account
 
-app.post('/signup', (req, res) => {
+// app.post('/signup', (req, res) => {
 
-    const token = randomString.generate();
-    const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token`, is_verified ) VALUES (?)";
-    const is_verified = 0;
-    const values = [
-        req.body.firstName,
-        req.body.lastName,
-        req.body.userName,
-        req.body.email,
-        req.body.password,
-        req.body.confirmPassword,
-        token,
-        is_verified
-    ]
-    db.query(sql, [values], (err, data) => {
-        if (err) {
-            return res.json(err);
-        }
+//     const token = randomString.generate();
+//     const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token`, is_verified ) VALUES (?)";
+//     const is_verified = 0;
+//     const values = [
+//         req.body.firstName,
+//         req.body.lastName,
+//         req.body.userName,
+//         req.body.email,
+//         req.body.password,
+//         req.body.confirmPassword,
+//         token,
+//         is_verified
+//     ]
+//     db.query(sql, [values], (err, data) => {
+//         if (err) {
+//             return res.json(err);
+//         }
 
-        const mailSubject = 'Mail Verification';
-        const content = `<p>Hi ${req.body.firstName}, please <a href="http://localhost:8000/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
-        sendMail(req.body.email, mailSubject, content)
-        return res.json(data)
-    })
-})
+//         const mailSubject = 'Mail Verification';
+//         const content = `<p>Hi ${req.body.firstName}, please <a href="http://localhost:8000/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
+//         sendMail(req.body.email, mailSubject, content)
+//         return res.json(data)
+//     })
+// })
 
 
-let storedData;
+// let storedData;
 // login
-app.post('/sigin', (req, res) => {
+// app.post('/sigin', (req, res) => {
 
-    const token = randomString.generate();
-    const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = ?";
-    const is_verified = 1;
-    db.query(sql, [req.body.email, req.body.password, is_verified], (err, data) => {
-        if (err) {
-            return res.json(err);
-        }
-        if (data.length > 0) {
-            storedData = data;
-            return res.json({ data: data, message: 'Success' });
-        }
-        else {
-            return res.json('login failed')
-        }
-    })
-})
+//     const token = randomString.generate();
+//     const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = ?";
+//     const is_verified = 1;
+//     db.query(sql, [req.body.email, req.body.password, is_verified], (err, data) => {
+//         if (err) {
+//             return res.json(err);
+//         }
+//         if (data.length > 0) {
+//             storedData = data;
+//             return res.json({ data: data, message: 'Success' });
+//         }
+//         else {
+//             return res.json('login failed')
+//         }
+//     })
+// })
 
 // logged user
-app.get('/logged-user', (req, res) => {
+// app.get('/logged-user', (req, res) => {
 
-    const sql = `select * FROM shurq_log WHERE is_verified = 1 AND token = ''`
-    db.query(sql, (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to fetch products' });
-        }
-        else {
-            if (storedData) {
-                res.send(storedData);
-            } else {
-                res.json({ message: 'No data stored yet' });
-            }
-        }
+//     const sql = `select * FROM shurq_log WHERE is_verified = 1 AND token = ''`
+//     db.query(sql, (err, data) => {
+//         if (err) {
+//             return res.status(500).json({ error: 'Failed to fetch products' });
+//         }
+//         else {
+//             if (storedData) {
+//                 res.send(storedData);
+//             } else {
+//                 res.json({ message: 'No data stored yet' });
+//             }
+//         }
 
-    })
+//     })
 
 
-});
+// });
 
 // get all keywords
-app.get('/all-keywords/:email', (req, res) => {
-    const userEmail = req.params.email;
-    const email = (Array.isArray(storedData)) && storedData[0].email;
-    const userEmail2 = email ? email : userEmail
-    if (typeof userEmail2 !== 'undefined') {
-        const sql = `select * FROM shurq_amazon_add_product WHERE user_email = '${userEmail2}'`
-        db.query(sql, (err, data) => {
-            if (data) {
-                res.send(data);
-            }
-            else {
-                return res.status(500).json({ error: 'Failed to fetch products' });
-            }
+app.get('/all-keywords', async (req, res) => {
+    try {
+        const sql = `SELECT * FROM shurq_user`;
 
-        })
+        const { rows } = await pool.query(sql);
+
+        if (rows.length > 0) {
+            res.json(rows);
+        } else {
+            res.status(404).json({ error: 'No products found' });
+        }
+    } catch (error) {
+        console.error('Error executing PostgreSQL query:', error.message);
+        res.status(500).json({ error: 'Failed to fetch products' });
     }
 });
 
-app.post('/add-keyword', (req, res) => {
-    const query = req.body;
+app.post('/add-keyword', async (req, res) => {
+    try {
+        const query = req.body;
 
-    const sql = "INSERT INTO shurq_amazon_add_product (`user_email`, `title`, `country`, `keywords`, `organic_rank`, `image_url`, `competitor_asin`, `scrape_date_time_ts` ) VALUES (?)";
-    const values = [
-        req.body.userEmail || '',
-        req.body.title || '',
-        req.body.country || '',
-        req.body.keywords || '',
-        req.body.organicRank || '',
-        req.body.imageUrl || '',
-        req.body.competitorAsin || '',
-        req.body.scrapeDateTimeTs || '',
+        const sql = `
+            INSERT INTO shurq_user 
+            ("title", "country", "keywords", "organic_rank", "image_url", "competitor_asin", "scrape_date_time_ts")
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *;
+        `;
 
-    ]
-    db.query(sql, [values], (err, data) => {
-        if (err) {
-            return res.json(err);
-        }
+        const values = [
+            query.title || '',
+            query.country || '',
+            query.keywords || '',
+            query.organicRank || '',
+            query.imageUrl || '',
+            query.competitorAsin || '',
+            query.scrapeDateTimeTs || ''
+        ];
+        return res.json(rows);
+    } catch (error) {
+        console.error('Error executing PostgreSQL query:', error.message);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
-        return res.json(data)
-    })
-})
+// app.post('/add-keyword', (req, res) => {
+//     const query = req.body;
+
+//     const sql = "INSERT INTO shurq_amazon_add_product (`user_email`, `title`, `country`, `keywords`, `organic_rank`, `image_url`, `competitor_asin`, `scrape_date_time_ts` ) VALUES (?)";
+//     const values = [
+//         req.body.userEmail || '',
+//         req.body.title || '',
+//         req.body.country || '',
+//         req.body.keywords || '',
+//         req.body.organicRank || '',
+//         req.body.imageUrl || '',
+//         req.body.competitorAsin || '',
+//         req.body.scrapeDateTimeTs || '',
+
+//     ]
+//     db.query(sql, [values], (err, data) => {
+//         if (err) {
+//             return res.json(err);
+//         }
+
+//         return res.json(data)
+//     })
+// })
 
 
 app.listen(port, () => {
