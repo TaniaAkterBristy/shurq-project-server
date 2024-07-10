@@ -3,8 +3,6 @@ const dotenv = require('dotenv').config();
 const pg = require('pg');
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const randomString = require('randomstring')
-const sendMail = require('./helpers/sendMail')
 const port = 8000 || process.env.PORT2;
 const { pool } = require('./routes/userRoute')
 const webRouter = require('./routes/webRoute')
@@ -266,78 +264,6 @@ app.get('/product-data', cache, getRepos);
 
 // redis code end
 
-// signup for creating account
-
-// app.post('/signup', (req, res) => {
-
-//     const token = randomString.generate();
-//     const sql = "INSERT INTO shurq_log (`firstName`, `lastName`, `userName`, `email`, `password`, `confirmPassword`, `token`, is_verified ) VALUES (?)";
-//     const is_verified = 0;
-//     const values = [
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.userName,
-//         req.body.email,
-//         req.body.password,
-//         req.body.confirmPassword,
-//         token,
-//         is_verified
-//     ]
-//     db.query(sql, [values], (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         }
-
-//         const mailSubject = 'Mail Verification';
-//         const content = `<p>Hi ${req.body.firstName}, please <a href="http://localhost:8000/mail-verification?token=${token}" >Verify</a> your mail.</p>`;
-//         sendMail(req.body.email, mailSubject, content)
-//         return res.json(data)
-//     })
-// })
-
-
-// let storedData;
-// login
-// app.post('/sigin', (req, res) => {
-
-//     const token = randomString.generate();
-//     const sql = "SELECT * FROM shurq_log WHERE `email` = ? AND `password` = ? AND `is_verified` = ?";
-//     const is_verified = 1;
-//     db.query(sql, [req.body.email, req.body.password, is_verified], (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         }
-//         if (data.length > 0) {
-//             storedData = data;
-//             return res.json({ data: data, message: 'Success' });
-//         }
-//         else {
-//             return res.json('login failed')
-//         }
-//     })
-// })
-
-// logged user
-// app.get('/logged-user', (req, res) => {
-
-//     const sql = `select * FROM shurq_log WHERE is_verified = 1 AND token = ''`
-//     db.query(sql, (err, data) => {
-//         if (err) {
-//             return res.status(500).json({ error: 'Failed to fetch products' });
-//         }
-//         else {
-//             if (storedData) {
-//                 res.send(storedData);
-//             } else {
-//                 res.json({ message: 'No data stored yet' });
-//             }
-//         }
-
-//     })
-
-
-// });
-
 // get all keywords
 app.get('/all-keywords', async (req, res) => {
     try {
@@ -382,30 +308,6 @@ app.post('/add-keyword', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-// app.post('/add-keyword', (req, res) => {
-//     const query = req.body;
-
-//     const sql = "INSERT INTO shurq_amazon_add_product (`user_email`, `title`, `country`, `keywords`, `organic_rank`, `image_url`, `competitor_asin`, `scrape_date_time_ts` ) VALUES (?)";
-//     const values = [
-//         req.body.userEmail || '',
-//         req.body.title || '',
-//         req.body.country || '',
-//         req.body.keywords || '',
-//         req.body.organicRank || '',
-//         req.body.imageUrl || '',
-//         req.body.competitorAsin || '',
-//         req.body.scrapeDateTimeTs || '',
-
-//     ]
-//     db.query(sql, [values], (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         }
-
-//         return res.json(data)
-//     })
-// })
 
 
 app.listen(port, () => {
